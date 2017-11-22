@@ -36,6 +36,10 @@ dependencies {
 	compile('org.springframework.cloud:spring-cloud-stream-binder-kafka')
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
 	compile('org.springframework.kafka:spring-kafka')
+	compile('org.springframework.boot:spring-boot-starter-social-twitter')
+	compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
+	compile group: 'org.twitter4j', name: 'twitter4j-stream', version: '4.0.6'
+	compile group: 'org.twitter4j', name: 'twitter4j-async', version: '4.0.6'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
