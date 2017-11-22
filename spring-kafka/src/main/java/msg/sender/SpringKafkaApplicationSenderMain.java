@@ -83,8 +83,7 @@ public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 
 		private void sendTweets(String hashTag) {
 			List<Tweet> tweets = helloTwitter(hashTag);
-			
-			tweets.stream().map(t->t.toString())
+			tweets.stream().map(t->t.getFromUser() + ":" + t.getText())
 			.forEach(this::writeToKafka);
 			
 		}
