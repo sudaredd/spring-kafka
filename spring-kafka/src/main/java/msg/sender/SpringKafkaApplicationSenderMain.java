@@ -5,11 +5,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -17,10 +20,21 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.StatusListener;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.ConfigurationBuilder;
+
 @EnableAutoConfiguration
 @SpringBootApplication
 public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 
+	private static final Logger looger = LoggerFactory
+            .getLogger(SpringKafkaApplicationSenderMain.class);
+	
 	 @Autowired
 	 private KafkaSender kafkaSender;
 	 
@@ -39,6 +53,9 @@ public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 	 
 	@Autowired
 	private Twitter twitter;
+	
+	@Autowired
+	private TwitterStream twitterStream;
 	 
 	    public static void main(String[] args)  {
 	/*		new SpringApplicationBuilder(SpringKafkaApplicationSenderMain.class)
@@ -60,7 +77,7 @@ public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
+	    	
 		}
 
 		private void writeToKafka(String msg) {
@@ -69,15 +86,62 @@ public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 
 		@Override
 		public void run(String... args) throws Exception {
+			
+			readTwitterStream();
 
-			sendFixMsg(1);
-			sendTweets("#java8");
+			/*sendFixMsg(1);
+			sendTweets("#java8");*/
 			//sendTweets("#java9");
 			
-	    	applicationContext.close();
+	   // 	applicationContext.close();
 
 		}
-		  public List<Tweet> helloTwitter(String hashTag) {
+		  private void readTwitterStream() {
+
+			  StatusListener statusListener =   new StatusListener() {
+					@Override
+					public void onException(Exception ex) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onStatus(Status status) {
+						String message = "time :"+status.getCreatedAt() + ",user:"+ status.getUser().getName() + ",text:"+status.getText();
+						looger.info(message);
+						writeToKafka(message);
+					}
+					
+					@Override
+					public void onStallWarning(StallWarning warning) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onScrubGeo(long userId, long upToStatusId) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
+						// TODO Auto-generated method stub
+						
+					}
+				};
+				
+				twitterStream.addListener(statusListener);
+				twitterStream.filter("#java","#java8","#Black Friday","#Ashes cricket","#python","#Donald Trump");
+		}
+
+		public List<Tweet> helloTwitter(String hashTag) {
 		    	return twitter.searchOperations().search(hashTag,20).getTweets();
 		    }
 
