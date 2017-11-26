@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
+
+import msg.model.TwitterUser;
 
 @EnableAutoConfiguration
 @SpringBootApplication
@@ -26,4 +29,8 @@ public class SpringKafkaApplicationReceiverMain implements CommandLineRunner {
 		public void run(String... args) throws Exception {
 
 		}
+}
+
+interface TwitterUserRepository extends ReactiveMongoRepository<TwitterUser, String> {
+	
 }

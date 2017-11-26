@@ -1,6 +1,7 @@
 package msg.sender;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
 
+import scala.collection.mutable.StringBuilder;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
@@ -114,8 +116,13 @@ public class SpringKafkaApplicationSenderMain implements CommandLineRunner {
 					@Override
 					public void onStatus(Status status) {
 						String message = "time :"+status.getCreatedAt() + ",user:"+ status.getUser().getName() + ",text:"+status.getText();
+						
+						StringJoiner joiner = new StringJoiner("");
+						
+						String res= joiner.add(status.getCreatedAt()+"").add(status.getUser().getName() ).add(status.getText()).toString();
 						looger.info(message);
-						writeToKafka(message);
+						looger.info("res msg:"+res);
+						writeToKafka(res);
 					}
 					
 					@Override
