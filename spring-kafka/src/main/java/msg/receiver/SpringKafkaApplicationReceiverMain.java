@@ -11,6 +11,13 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import msg.model.TwitterUser;
 
+/**
+ * Main entry point for running the Kafka message receiver application.
+ * This application listens to a Kafka topic, processes incoming messages (tweets),
+ * and saves them to a MongoDB database.
+ * 
+ * To run this receiver, execute the main method in this class.
+ */
 @EnableAutoConfiguration
 @SpringBootApplication
 public class SpringKafkaApplicationReceiverMain implements CommandLineRunner {

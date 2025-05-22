@@ -24,9 +24,15 @@ public class KafkaReceiverConfig {
     @Value("${kafka.bootstrap.servers}")
     private String bootstrapServers;
 
+    @Value("${kafka.consumer.group.id}") // Injected consumer group ID
+    private String consumerGroupId;
+
+    @Value("${kafka.consumer.client.id}") // Injected consumer client ID
+    private String consumerClientId;
+
     @Bean
-    public Map consumerConfigs() {
-        Map props = new HashMap<>();
+    public Map<String, Object> consumerConfigs() { // Return type specified for clarity
+        Map<String, Object> props = new HashMap<>(); // Type specified for clarity
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
@@ -35,9 +41,9 @@ public class KafkaReceiverConfig {
                 StringDeserializer.class);
         // consumer groups allow a pool of processes to divide the work of
         // consuming and processing records
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "sample-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroupId); // Used injected property
         
-        props.put(ConsumerConfig.CLIENT_ID_CONFIG, "sample-consumer");
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, consumerClientId); // Used injected property
 
         return props;
     }
